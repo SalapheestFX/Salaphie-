@@ -182,13 +182,19 @@ function findReference(message: string) {
 
   // Match numeric or written verse references in Hausa or English.
   const numericMatch = text.match(
-    /\b(?:verse|ayah|ayat|aya)\s*(?:(?:ta|na|number)\s*)?(\d{1,3})\b/
+    /\b(?:verse|ayah|ayat|aya|ayatun|ayata)\s*(?:(?:ta|na|number|numbered)\s*)?(\d{1,3})\b/
+  );
+
+  const ordinalMatch = text.match(
+    /\b(\d{1,3})(?:st|nd|rd|th)\s+(?:verse|ayah|ayat|aya)\b/
   );
 
   let verse: number | undefined;
 
   if (numericMatch) {
     verse = Number(numericMatch[1]);
+  } else if (ordinalMatch) {
+    verse = Number(ordinalMatch[1]);
   } else {
     const wordMatch = text.match(
       /\b(?:aya|ayat|ayah|verse)\s+(?:(?:ta|na|number)\s+)?([a-z]+(?:\s+[a-z]+)?)\b/
@@ -221,13 +227,49 @@ function findReference(message: string) {
 
 
 const SURAH_ALIASES: Record<string, number> = {
+  // Al-Baqarah
+  "baqarah": 2,
+  "baqara": 2,
+  "baqarat": 2,
+  "surah baqarah": 2,
+  "suratul baqarah": 2,
+  // Ali 'Imran
+  "al imran": 3,
+  "ali imran": 3,
+  "aal imran": 3,
+  "al e imran": 3,
+  // Al-Kahf
+  "kahf": 18,
+  "kahafi": 18,
+  "kahaf": 18,
+  // Ya-Sin
+  "yaseen": 36,
+  "yasin": 36,
+  "ya sin": 36,
+  // Ar-Rahman
+  "rahman": 55,
+  "ar rahman": 55,
+  // Al-Mulk
+  "mulk": 67,
+  "al mulk": 67,
+  // Al-Ikhlas
+  "ikhlas": 112,
+  "ikhl as": 112,
+  // Al-Falaq and An-Nas
+  "falaq": 113,
+  "falak": 113,
+  "nas": 114,
+  "naas": 114,
+  // Al-Kawthar
   "kausar": 108,
   "kauthar": 108,
   "kawthar": 108,
   "al kausar": 108,
   "al kauthar": 108,
   "al kawthar": 108,
+  // Other common spellings
   "muzzammil": 73,
+  "muzammil": 73,
   "al muzzammil": 73,
   "mursalat": 77,
   "al mursalat": 77,
@@ -255,10 +297,11 @@ function wantsFullSurah(message: string) {
   if (findReference(message)) return false;
 
   return (
-    /\b(full|complete|entire|whole|recite|read)\b/.test(text) ||
-    (/\b(give me|show me|provide|display)\b/.test(text) &&
+    /\b(full|complete|entire|whole|all verses|every verse|recite|read)\b/.test(text) ||
+    (/\b(give me|show me|provide|display|bring|i want|send me)\b/.test(text) &&
       /\b(surah|suratul|surat|chapter)\b/.test(text)) ||
-    /\bsuratul\b/.test(text)
+    /\bsuratul\b/.test(text) ||
+    /\bwhole of surah\b/.test(text)
   );
 }
 
