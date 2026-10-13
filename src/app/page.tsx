@@ -387,11 +387,11 @@ export default function Home() {
                 Explore topics
               </a>
 
-              <h2 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <h2 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-[#7290b2]">
                 Recent chats
               </h2>
               {history.length === 0 ? (
-                <p className="px-2 py-4 text-sm leading-6 text-slate-400">
+                <p className="px-2 py-4 text-sm leading-6 text-[#7892b0]">
                   Your conversations will appear here.
                 </p>
               ) : (
