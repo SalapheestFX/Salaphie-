@@ -508,7 +508,7 @@ async function answerHadithRequest(
     arabic: arabicText || "",
     translation: englishText || "",
     translationName: metadata?.name ?? "Hadith collection",
-    source: "Fawaz Ahmed Hadith API dataset",
+    source: "Hadith source",
     type: "hadith",
   };
 }

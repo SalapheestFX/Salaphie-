@@ -309,18 +309,18 @@ export default function Home() {
                         <p
                           dir="rtl"
                           lang="ar"
-                          className="text-right text-xl leading-[2] text-[#172e4e] sm:text-2xl sm:leading-[2]"
+                          className="text-right text-base leading-8 text-[#172e4e] sm:text-lg sm:leading-9"
                         >
                           {message.arabic}
                         </p>
 
                         <div className="my-3.5 h-px bg-white/80" />
 
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                        <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                           English translation
                         </p>
                         {message.translation ? (
-                          <p className="mt-1.5 text-[13px] leading-6 text-slate-700 sm:text-sm sm:leading-6">
+                          <p className="mt-1.5 text-xs leading-5 text-slate-700 sm:text-sm sm:leading-6">
                             {message.translation}
                           </p>
                         ) : (
