@@ -191,8 +191,8 @@ export default function Home() {
             className="flex items-center gap-2.5 rounded-xl text-left"
             aria-label="Salaphie home"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#142d52] text-white shadow-sm">
-              <BookOpen size={21} />
+            <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white">
+              <img src="/salaphie-logo.svg" alt="Salaphie logo" className="h-10 w-10 object-contain" />
             </span>
             <span className="text-[21px] font-bold tracking-[-0.8px] text-[#142d52]">
               Salaphie
@@ -455,12 +455,6 @@ export default function Home() {
                               </div>
                             )}
 
-                            {message.source && (
-                              <div className="mt-4 flex items-start gap-2 border-t border-blue-50 pt-3 text-xs leading-5 text-slate-500">
-                                <ShieldCheck size={15} className="mt-0.5 shrink-0 text-[#6d91b8]" />
-                                <span>Source: {message.source}</span>
-                              </div>
-                            )}
                           </div>
                         </div>
                       ) : (
