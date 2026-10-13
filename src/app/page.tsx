@@ -80,16 +80,19 @@ export default function Home() {
 
       const data = await response.json();
 
-      if (data.success && data.type === "quran_verse") {
+      if (
+        data.success &&
+        ["quran_verse", "hadith"].includes(data.type)
+      ) {
         setMessages((current) => [
           ...current,
           {
             role: "assistant",
             reference: data.reference,
             arabic: data.arabic,
-            translation: data.translation,
-            translationName: data.translationName,
-            source: data.source,
+            translation: data.translation ?? data.english ?? null,
+            translationName: data.translationName ?? data.collection ?? "",
+            source: data.source ?? data.sourceName ?? "",
             success: true,
           },
         ]);

@@ -501,7 +501,16 @@ async function answerHadithRequest(
     "The dataset's text, numbering, and references should be checked " +
     "against a reliable edition. No missing text or grading has been invented.";
 
-  return { success: true, reply };
+  return {
+    success: true,
+    reply,
+    reference: parts.slice(0, 2).join(" — "),
+    arabic: arabicText || "",
+    translation: englishText || "",
+    translationName: metadata?.name ?? "Hadith collection",
+    source: "Fawaz Ahmed Hadith API dataset",
+    type: "hadith",
+  };
 }
 
 export async function POST(request: Request) {
@@ -664,9 +673,8 @@ export async function POST(request: Request) {
       );
 
       return NextResponse.json({
-        success: result.success,
-        type: "answer",
-        reply: result.reply,
+        ...result,
+        type: result.success ? "hadith" : "answer",
       }, {
         status: result.success ? 200 : 502,
       });
