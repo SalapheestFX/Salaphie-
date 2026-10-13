@@ -358,6 +358,35 @@ export default function Home() {
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
+              <h2 className="mb-2 mt-1 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Islamic topics
+              </h2>
+              {modules.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.title}
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      void sendMessage(`Help me research ${item.title} using reliable Islamic sources.`);
+                    }}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm text-[#23466f] transition hover:bg-blue-50"
+                  >
+                    <Icon size={18} className="shrink-0 text-[#5785b5]" />
+                    <span>{item.title}</span>
+                  </button>
+                );
+              })}
+              <a
+                href="#library"
+                onClick={() => setMenuOpen(false)}
+                className="mt-2 flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-[#23466f] hover:bg-blue-50"
+              >
+                <LibraryBig size={18} className="text-[#5785b5]" />
+                Explore topics
+              </a>
+
               <h2 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Recent chats
               </h2>
@@ -396,34 +425,6 @@ export default function Home() {
                 ))
               )}
 
-              <h2 className="mb-2 mt-6 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                Islamic topics
-              </h2>
-              {modules.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.title}
-                    type="button"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      void sendMessage(`Help me research ${item.title} using reliable Islamic sources.`);
-                    }}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm text-[#23466f] transition hover:bg-blue-50"
-                  >
-                    <Icon size={18} className="shrink-0 text-[#5785b5]" />
-                    <span>{item.title}</span>
-                  </button>
-                );
-              })}
-              <a
-                href="#library"
-                onClick={() => setMenuOpen(false)}
-                className="mt-2 flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-[#23466f] hover:bg-blue-50"
-              >
-                <LibraryBig size={18} className="text-[#5785b5]" />
-                Explore topics
-              </a>
             </div>
 
             <div className="border-t border-blue-50 px-4 py-3 text-xs text-slate-400">
