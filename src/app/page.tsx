@@ -29,6 +29,11 @@ type Message = {
   translation?: string | null;
   translationName?: string;
   source?: string;
+  verses?: {
+    number: number;
+    arabic: string;
+    translation: string;
+  }[];
   success?: boolean;
 };
 
@@ -223,6 +228,7 @@ export default function Home() {
             translation: data.translation ?? data.english ?? null,
             translationName: data.translationName ?? data.collection ?? "",
             source: data.source ?? data.sourceName ?? "",
+            verses: Array.isArray(data.verses) ? data.verses : undefined,
             success: true,
           },
         ]);
@@ -627,25 +633,59 @@ export default function Home() {
                               </p>
                             )}
 
-                            {message.arabic && (
-                              <p
-                                dir="rtl"
-                                lang="ar"
-                                className="mb-5 text-right text-xl leading-[2] text-[#172f50] sm:text-2xl"
-                              >
-                                {message.arabic}
-                              </p>
-                            )}
-
-                            {message.translation && (
-                              <div className="border-t border-blue-50 pt-4">
-                                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[1px] text-slate-400">
-                                  {message.translationName || "Translation"}
-                                </p>
-                                <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
-                                  {message.translation}
-                                </p>
+                            {message.verses && message.verses.length > 0 ? (
+                              <div className="space-y-3">
+                                {message.verses.map((verse) => (
+                                  <div
+                                    key={verse.number}
+                                    className="rounded-xl border border-blue-100/80 bg-white/75 p-3 shadow-sm sm:p-4"
+                                  >
+                                    <div className="mb-3 flex justify-end">
+                                      <span className="flex h-7 min-w-7 items-center justify-center rounded-full border border-sky-100 bg-sky-50 px-2 text-xs font-semibold text-[#376da5]">
+                                        {verse.number}
+                                      </span>
+                                    </div>
+                                    <p
+                                      dir="rtl"
+                                      lang="ar"
+                                      className="mb-4 text-right text-xl leading-[2.1] text-[#172f50] sm:text-2xl"
+                                    >
+                                      {verse.arabic}
+                                    </p>
+                                    <div className="border-t border-blue-50 pt-3">
+                                      <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[1px] text-slate-400">
+                                        {message.translationName || "Translation"}
+                                      </p>
+                                      <p className="text-sm leading-7 text-slate-700">
+                                        {verse.translation}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
+                            ) : (
+                              <>
+                                {message.arabic && (
+                                  <p
+                                    dir="rtl"
+                                    lang="ar"
+                                    className="mb-5 text-right text-xl leading-[2] text-[#172f50] sm:text-2xl"
+                                  >
+                                    {message.arabic}
+                                  </p>
+                                )}
+
+                                {message.translation && (
+                                  <div className="border-t border-blue-50 pt-4">
+                                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-[1px] text-slate-400">
+                                      {message.translationName || "Translation"}
+                                    </p>
+                                    <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
+                                      {message.translation}
+                                    </p>
+                                  </div>
+                                )}
+                              </>
                             )}
 
                           </div>

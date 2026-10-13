@@ -756,6 +756,25 @@ export async function POST(request: Request) {
           success: true,
           type: "quran_verse",
           reference: `Surah ${surahName} — Qur'an ${chapter}:1-${verses.length}`,
+          verses: verses.map(
+            (v: {
+              verse_key: string;
+              text_uthmani: string;
+              translations?: { resource_id: number; text: string }[];
+            }) => {
+              const item = v.translations?.find(
+                (t) => t.resource_id === 85 && t.text
+              );
+
+              return {
+                number: Number(v.verse_key.split(":")[1]),
+                arabic: v.text_uthmani,
+                translation: item
+                  ? cleanTranslation(item.text)
+                  : "Translation unavailable",
+              };
+            }
+          ),
           arabic,
           translation,
           translationName: "M.A.S. Abdel Haleem",
