@@ -739,7 +739,7 @@ export async function POST(request: Request) {
     }
 
     // Natural-language Qur'an topic research
-    const researchIntent = /\b(qur.?an|quranic|ayah|ayat|verse|verses|surah|surat|tafsir|allah|prophet|islamic|ayoyin|surorin|al.?qur.?ani|hakuri|iyaye|zunubi|rahama|imani|azaba)\b/i.test(message);
+    const researchIntent = /\b(qur.?an|quranic|ayah|ayat|verse|verses|surah|surat|tafsir|allah|prophet|islamic|patience|patient|parents|mother|father|obey|obedience|grave|punishment|backbiting|forgiveness|mercy|faith|sin|sins|ayoyin|surorin|al.?qur.?ani|hakuri|iyaye|zunubi|rahama|imani|azaba)\b/i.test(message);
     const researchRequest = /\b(find|show|list|search|bring|collect|gather|all|more|verses|ayat|evidence|mentions?|about|what|give me|provide|retrieve|nemo|kawo|tara|duk|ina son|ina neman)\b/i.test(message);
 
     if (researchIntent && researchRequest && process.env.GROQ_API_KEY) {
@@ -794,7 +794,10 @@ export async function POST(request: Request) {
               });
               if (!response.ok) return [];
               const data = await response.json();
-              return Array.isArray(data.search) ? data.search : [];
+              const searchData = data.search;
+              if (Array.isArray(searchData)) return searchData;
+              if (Array.isArray(searchData?.results)) return searchData.results;
+              return [];
             })
           );
 
