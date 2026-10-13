@@ -284,18 +284,18 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-dvh overflow-x-hidden bg-[#f8fbff] text-[#172b4d]">
+    <main className="min-h-dvh overflow-x-hidden bg-[#f4f9ff] text-[#172b4d]">
       <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden">
         <div className="absolute -top-40 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-sky-200/30 blur-3xl" />
         <div className="absolute right-[-100px] top-[35%] h-72 w-72 rounded-full bg-blue-100/40 blur-3xl" />
       </div>
 
-      <header className="sticky top-0 z-30 border-b border-white/80 bg-white/85 backdrop-blur-2xl">
+      <header className="sticky top-0 z-30 border-b border-white/70 bg-white/55 backdrop-blur-2xl">
         <div className="mx-auto flex h-[68px] max-w-6xl items-center gap-3 px-4 sm:px-6">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-white/80 text-[#23466f] transition hover:bg-blue-50"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/60 bg-white/25 text-[#23466f] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_8px_24px_rgba(77,135,190,0.08)] backdrop-blur-2xl transition hover:bg-white/45"
             aria-label="Open sidebar"
           >
             <Menu size={20} />
@@ -314,7 +314,7 @@ export default function Home() {
           <button
             type="button"
             onClick={startNewChat}
-            className="ml-auto flex items-center gap-2 rounded-xl border border-blue-100 bg-white/80 px-3 py-2.5 text-sm font-medium text-[#23466f] shadow-sm transition hover:bg-blue-50"
+            className="ml-auto flex items-center gap-2 rounded-xl border border-white/60 bg-white/30 px-3 py-2.5 text-sm font-medium text-[#23466f] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_24px_rgba(77,135,190,0.10)] backdrop-blur-2xl transition hover:bg-white/50"
           >
             <Plus size={17} />
             <span className="hidden sm:inline">New chat</span>
@@ -330,8 +330,8 @@ export default function Home() {
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 h-full w-full bg-[#102747]/35 backdrop-blur-[2px]"
           />
-          <aside className="absolute inset-y-0 left-0 flex w-[min(86vw,340px)] flex-col border-r border-blue-100 bg-white/95 shadow-2xl backdrop-blur-2xl">
-            <div className="flex h-[68px] items-center justify-between border-b border-blue-50 px-4">
+          <aside className="absolute inset-y-0 left-0 flex w-[min(86vw,340px)] flex-col border-r border-white/80 bg-white/55 shadow-[12px_0_45px_rgba(77,135,190,0.08),inset_-1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl">
+            <div className="flex h-[68px] items-center justify-between border-b border-white/80 bg-white/35 px-4">
               <div className="flex items-center gap-2.5">
                 <img src="/salaphie-logo.svg" alt="" className="h-9 w-9 object-contain" />
                 <span className="text-lg font-bold text-[#142d52]">Salaphie</span>
@@ -339,18 +339,18 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
-                className="rounded-xl p-2 text-[#45658b] hover:bg-blue-50"
+                className="rounded-xl border border-white/60 bg-white/35 p-2 text-[#45658b] shadow-sm backdrop-blur-xl transition hover:bg-white/65"
                 aria-label="Close sidebar"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="border-b border-blue-50 p-3">
+            <div className="border-b border-white/70 bg-white/20 p-3">
               <button
                 type="button"
                 onClick={startNewChat}
-                className="flex w-full items-center gap-3 rounded-xl border border-blue-100 bg-[#f3f8ff] px-3.5 py-3 text-left text-sm font-semibold text-[#23466f] transition hover:bg-blue-50"
+                className="flex w-full items-center gap-3 rounded-xl border border-white/70 bg-white/30 px-3.5 py-3 text-left text-sm font-semibold text-[#23466f] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_20px_rgba(77,135,190,0.08)] backdrop-blur-xl transition hover:bg-white/55"
               >
                 <Plus size={18} />
                 New chat
@@ -358,7 +358,7 @@ export default function Home() {
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto p-3">
-              <h2 className="mb-2 mt-1 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <h2 className="mb-2 mt-1 rounded-lg px-2 py-1 text-xs font-semibold uppercase tracking-wider text-[#7290b2]">
                 Islamic topics
               </h2>
               {modules.map((item) => {
@@ -371,7 +371,7 @@ export default function Home() {
                       setMenuOpen(false);
                       void sendMessage(`Help me research ${item.title} using reliable Islamic sources.`);
                     }}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm text-[#23466f] transition hover:bg-blue-50"
+                    className="flex w-full items-center gap-3 rounded-xl border border-transparent px-3 py-3 text-left text-sm text-[#23466f] transition hover:border-white/80 hover:bg-white/45 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
                   >
                     <Icon size={18} className="shrink-0 text-[#5785b5]" />
                     <span>{item.title}</span>
@@ -381,7 +381,7 @@ export default function Home() {
               <a
                 href="#library"
                 onClick={() => setMenuOpen(false)}
-                className="mt-2 flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-[#23466f] hover:bg-blue-50"
+                className="mt-2 flex items-center gap-3 rounded-xl border border-transparent px-3 py-3 text-sm text-[#23466f] transition hover:border-white/80 hover:bg-white/45"
               >
                 <LibraryBig size={18} className="text-[#5785b5]" />
                 Explore topics
@@ -398,14 +398,14 @@ export default function Home() {
                 history.map((conversation) => (
                   <div
                     key={conversation.id}
-                    className={`mb-1 flex items-center gap-1 rounded-xl p-1 ${
-                      activeChatId === conversation.id ? "bg-blue-50" : "hover:bg-slate-50"
+                    className={`mb-1 flex items-center gap-1 rounded-xl border border-white/50 bg-white/20 p-1 backdrop-blur-xl ${
+                      activeChatId === conversation.id ? "border-white/90 bg-white/65 shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_4px_15px_rgba(77,135,190,0.07)]" : "hover:bg-white/45"
                     }`}
                   >
                     <button
                       type="button"
                       onClick={() => openConversation(conversation)}
-                      className="min-w-0 flex-1 rounded-lg px-2 py-2.5 text-left text-sm text-[#23466f]"
+                      className="min-w-0 flex-1 rounded-lg px-2 py-2.5 text-left text-sm text-[#23466f] transition hover:bg-white/40"
                     >
                       <span className="block truncate font-medium">{conversation.title}</span>
                       <span className="mt-1 block text-xs text-slate-400">
@@ -427,7 +427,7 @@ export default function Home() {
 
             </div>
 
-            <div className="border-t border-blue-50 px-4 py-3 text-xs text-slate-400">
+            <div className="border-t border-white/80 bg-white/25 px-4 py-3 text-xs text-[#7892b0] backdrop-blur-xl">
               Islamic research · Source-first answers
             </div>
           </aside>
@@ -437,13 +437,13 @@ export default function Home() {
         {!isChat ? (
           <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center pb-10 pt-12 sm:pt-16">
             <div className="mb-7 flex justify-center">
-              <div className="flex h-[68px] w-[68px] items-center justify-center rounded-[23px] border border-white bg-white/80 text-[#17365f] shadow-[0_8px_35px_rgba(44,91,145,0.12)] backdrop-blur-xl">
+              <div className="flex h-[68px] w-[68px] items-center justify-center rounded-[23px] border border-white/80 bg-white/55 text-[#17365f] shadow-[0_8px_35px_rgba(44,91,145,0.10),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-2xl">
                 <BookOpen size={34} strokeWidth={1.7} />
               </div>
             </div>
 
             <div className="mb-8 text-center">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100/90 bg-white/80 px-3.5 py-1.5 text-xs font-medium text-[#45658b] shadow-sm backdrop-blur-xl">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/50 px-3.5 py-1.5 text-xs font-medium text-[#45658b] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_5px_20px_rgba(77,135,190,0.06)] backdrop-blur-2xl">
                 <Sparkles size={14} className="text-sky-600" />
                 Your Islamic research companion
               </div>
@@ -463,7 +463,7 @@ export default function Home() {
 
             <form
               onSubmit={handleSubmit}
-              className="group rounded-[25px] border border-white bg-white/85 p-3 shadow-[0_12px_45px_rgba(42,84,132,0.10)] ring-1 ring-blue-100/80 backdrop-blur-2xl transition focus-within:ring-blue-200 sm:p-4"
+              className="group rounded-[25px] border border-white/80 bg-white/55 p-3 shadow-[0_12px_40px_rgba(42,84,132,0.07),inset_0_1px_0_rgba(255,255,255,0.95)] ring-1 ring-white/70 backdrop-blur-2xl transition focus-within:ring-blue-200 sm:p-4"
             >
               <textarea
                 ref={textareaRef}
@@ -500,7 +500,7 @@ export default function Home() {
                     key={item.title}
                     type="button"
                     onClick={() => void sendMessage(item.prompt)}
-                    className="group rounded-2xl border border-white bg-white/65 p-4 text-left shadow-sm ring-1 ring-blue-50/90 backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md"
+                    className="group rounded-2xl border border-white/80 bg-white/45 p-4 text-left shadow-[0_8px_25px_rgba(77,135,190,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] ring-1 ring-white/70 backdrop-blur-2xl transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md"
                   >
                     <span className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-[#edf5ff] text-[#376da5] transition group-hover:bg-[#e0efff]">
                       <Icon size={19} strokeWidth={1.8} />
@@ -541,7 +541,7 @@ export default function Home() {
                           `Help me research ${item.title} using reliable Islamic sources.`
                         )
                       }
-                      className="flex min-w-0 items-center gap-3 rounded-2xl border border-blue-50 bg-white/70 p-3 text-left transition hover:border-blue-100 hover:bg-white sm:p-3.5"
+                      className="flex min-w-0 items-center gap-3 rounded-2xl border border-white/75 bg-white/45 p-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] backdrop-blur-xl transition hover:border-blue-100 hover:bg-white sm:p-3.5"
                     >
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#eff6ff] text-[#416f9e]">
                         <Icon size={18} />
@@ -598,8 +598,8 @@ export default function Home() {
                   ) : (
                     <div className="min-w-0 flex-1 pt-1">
                       {message.success && (message.arabic || message.reference) ? (
-                        <div className="overflow-hidden rounded-2xl border border-blue-100/90 bg-white/90 shadow-[0_5px_25px_rgba(37,77,122,0.06)] backdrop-blur-xl">
-                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-blue-50 bg-[#f5f9ff] px-4 py-3 sm:px-5">
+                        <div className="overflow-hidden rounded-2xl border border-white/80 bg-white/60 shadow-[0_5px_25px_rgba(37,77,122,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-2xl">
+                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/70 bg-sky-100/35 px-4 py-3 backdrop-blur-xl sm:px-5">
                             <div className="flex items-center gap-2 text-sm font-semibold text-[#23466f]">
                               <BookMarked size={17} />
                               Research reference
@@ -681,7 +681,7 @@ export default function Home() {
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-white text-[#234b79] shadow-sm">
                     <BookOpen size={18} />
                   </div>
-                  <div className="flex items-center gap-2 rounded-2xl border border-blue-50 bg-white/80 px-4 py-3.5 text-sm text-slate-500 shadow-sm">
+                  <div className="flex items-center gap-2 rounded-2xl border border-white/80 bg-white/50 px-4 py-3.5 text-sm text-slate-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-2xl">
                     <LoaderCircle size={17} className="animate-spin text-[#4c84bc]" />
                     Researching your question...
                   </div>
@@ -695,11 +695,11 @@ export default function Home() {
       </section>
 
       {isChat && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/80 bg-[#f8fbff]/90 px-3 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 backdrop-blur-2xl sm:px-6 sm:pt-4">
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/80 bg-[#edf6ff]/75 px-3 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 backdrop-blur-2xl sm:px-6 sm:pt-4">
           <div className="mx-auto max-w-3xl">
             <form
               onSubmit={handleSubmit}
-              className="rounded-[22px] border border-white bg-white/95 p-2.5 shadow-[0_6px_35px_rgba(42,84,132,0.12)] ring-1 ring-blue-100/90 sm:p-3"
+              className="rounded-[22px] border border-white/85 bg-white/60 p-2.5 shadow-[0_6px_30px_rgba(42,84,132,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] ring-1 ring-white/80 backdrop-blur-2xl sm:p-3"
             >
               <textarea
                 ref={textareaRef}
