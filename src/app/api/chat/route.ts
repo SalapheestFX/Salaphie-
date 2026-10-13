@@ -136,8 +136,10 @@ function normalize(value: string) {
 function findReference(message: string) {
   const text = normalize(message);
 
-  // Direct reference such as Qur'an 3:50 or 3:50
-  const direct = text.match(/\b(?:quran\s*)?(\d{1,3})\s*:\s*(\d{1,3})\b/);
+  // Direct reference: Quran 23:50 or 23:50
+  const direct = text.match(
+    /\b(?:quran\s*)?(\d{1,3})\s*:\s*(\d{1,3})\b/
+  );
 
   if (direct) {
     return {
@@ -146,16 +148,69 @@ function findReference(message: string) {
     };
   }
 
-  // Named Surah with a verse number
-  const verseMatch = text.match(
-    /\b(?:verse|ayah|ayat)\s*(?:number\s*)?(\d{1,3})\b/
+  // Common Hausa number words.
+  const numberWords: Record<string, number> = {
+    daya: 1,
+    biyu: 2,
+    uku: 3,
+    hudu: 4,
+    biyar: 5,
+    shida: 6,
+    bakwai: 7,
+    takwas: 8,
+    tara: 9,
+    goma: 10,
+    "sha daya": 11,
+    "sha biyu": 12,
+    "sha uku": 13,
+    "sha hudu": 14,
+    "sha biyar": 15,
+    "sha shida": 16,
+    "sha bakwai": 17,
+    "sha takwas": 18,
+    "sha tara": 19,
+    ashirin: 20,
+    talatin: 30,
+    "arba'in": 40,
+    arbain: 40,
+    hamsin: 50,
+    sittin: 60,
+    "saba'in": 70,
+    tamanin: 80,
+    "casa'in": 90,
+  };
+
+  // Match numeric or written verse references in Hausa or English.
+  const numericMatch = text.match(
+    /\b(?:verse|ayah|ayat|aya)\s*(?:(?:ta|na|number)\s*)?(\d{1,3})\b/
   );
 
-  if (!verseMatch) return null;
+  let verse: number | undefined;
 
-  const verse = Number(verseMatch[1]);
+  if (numericMatch) {
+    verse = Number(numericMatch[1]);
+  } else {
+    const wordMatch = text.match(
+      /\b(?:aya|ayat|ayah|verse)\s+(?:(?:ta|na|number)\s+)?([a-z]+(?:\s+[a-z]+)?)\b/
+    );
 
-  for (const [name, chapter] of Object.entries(SURAH_NAMES)) {
+    if (wordMatch) {
+      const numberText = wordMatch[1].trim();
+      verse = numberWords[numberText];
+    }
+  }
+
+  if (!verse || verse < 1 || verse > 286) {
+    return null;
+  }
+
+  // Longest Surah names first to avoid matching shorter aliases prematurely.
+  const names = Object.entries({
+    ...SURAH_NAMES,
+    ...SURAH_ALIASES,
+  }).sort(([a], [b]) => b.length - a.length);
+
+  for (const [name, chapter] of names) {
     if (text.includes(name)) {
       return { chapter, verse };
     }
@@ -195,6 +250,9 @@ function findSurah(message: string) {
 
 function wantsFullSurah(message: string) {
   const text = normalize(message);
+
+  // A recognized individual verse always takes priority.
+  if (findReference(message)) return false;
 
   return (
     /\b(full|complete|entire|whole|recite|read)\b/.test(text) ||
