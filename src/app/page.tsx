@@ -63,12 +63,10 @@ const suggestions = [
 ];
 
 const modules = [
-  { title: "Qur'an", description: "Verses and translations", icon: BookOpen },
-  { title: "Hadith", description: "Hadith collections and references", icon: BookMarked },
-  { title: "Tafsir", description: "Classical Qur'anic explanations", icon: ScrollText },
-  { title: "Aqidah", description: "Islamic beliefs", icon: ShieldCheck },
-  { title: "Statements of the Salaf", description: "Reports from early scholars", icon: Quote },
-  { title: "Islamic Library", description: "Explore Islamic sources", icon: LibraryBig },
+  { title: "Qur'an & Tafsir", description: "Verses, translations, and classical explanations", icon: BookOpen },
+  { title: "Hadith", description: "Hadith collections, references, and explanations", icon: BookMarked },
+  { title: "Aqidah", description: "Islamic beliefs and their evidence", icon: ShieldCheck },
+  { title: "Islamic Library", description: "Classical sources and statements of the Salaf", icon: LibraryBig },
 ];
 
 export default function Home() {
@@ -239,11 +237,13 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Salaphie chat error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       setMessages((previous) => [
         ...previous,
         {
           role: "assistant",
-          text: "I couldn't connect to the research service. Please check your connection and try again.",
+          text: `The request failed: ${errorMessage}. Please check the server terminal for details.`,
         },
       ]);
     } finally {
@@ -290,8 +290,16 @@ export default function Home() {
         <div className="absolute right-[-100px] top-[35%] h-72 w-72 rounded-full bg-blue-100/40 blur-3xl" />
       </div>
 
-      <header className="sticky top-0 z-30 border-b border-white/80 bg-white/85 backdrop-blur-2xl relative">
-        <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between px-4 sm:px-6">
+      <header className="sticky top-0 z-30 border-b border-white/80 bg-white/85 backdrop-blur-2xl">
+        <div className="mx-auto flex h-[68px] max-w-6xl items-center gap-3 px-4 sm:px-6">
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-white/80 text-[#23466f] transition hover:bg-blue-50"
+            aria-label="Open sidebar"
+          >
+            <Menu size={20} />
+          </button>
           <button
             type="button"
             onClick={startNewChat}
@@ -301,128 +309,84 @@ export default function Home() {
             <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white">
               <img src="/salaphie-logo.svg" alt="Salaphie logo" className="h-10 w-10 object-contain" />
             </span>
-            <span className="text-[21px] font-bold tracking-[-0.8px] text-[#142d52]">
-              Salaphie
-            </span>
+            <span className="text-[21px] font-bold tracking-[-0.8px] text-[#142d52]">Salaphie</span>
           </button>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setHistoryOpen((open) => !open);
-                setMenuOpen(false);
-              }}
-              className="hidden items-center gap-2 rounded-xl border border-blue-100 bg-white/80 px-3.5 py-2.5 text-sm font-medium text-[#23466f] shadow-sm transition hover:bg-blue-50 sm:flex"
-            >
-              <History size={17} />
-              History
-              {history.length > 0 && (
-                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs">
-                  {history.length}
-                </span>
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={startNewChat}
-              className="hidden items-center gap-2 rounded-xl border border-blue-100 bg-white/80 px-3.5 py-2.5 text-sm font-medium text-[#23466f] shadow-sm transition hover:bg-blue-50 sm:flex"
-            >
-              <Plus size={17} />
-              New chat
-            </button>
-            <button
-              type="button"
-              onClick={() => setMenuOpen((open) => !open)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-100 bg-white/80 text-[#23466f] sm:hidden"
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={startNewChat}
+            className="ml-auto flex items-center gap-2 rounded-xl border border-blue-100 bg-white/80 px-3 py-2.5 text-sm font-medium text-[#23466f] shadow-sm transition hover:bg-blue-50"
+          >
+            <Plus size={17} />
+            <span className="hidden sm:inline">New chat</span>
+          </button>
         </div>
+      </header>
 
-        {menuOpen && (
-          <div className="border-t border-blue-50 bg-white/95 px-4 py-3 shadow-lg sm:hidden">
-            <button
-              type="button"
-              onClick={() => {
-                setHistoryOpen((open) => !open);
-                setMenuOpen(false);
-              }}
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-[#23466f] hover:bg-blue-50"
-            >
-              <History size={18} />
-              Chat history ({history.length})
-            </button>
-            <button
-              type="button"
-              onClick={startNewChat}
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-[#23466f] hover:bg-blue-50"
-            >
-              <Plus size={18} />
-              Start a new chat
-            </button>
-            <a
-              href="#library"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-[#23466f] hover:bg-blue-50"
-            >
-              <LibraryBig size={18} />
-              Explore Islamic topics
-            </a>
-          </div>
-        )}
-        {historyOpen && (
-          <div className="absolute right-3 top-[68px] z-50 w-[min(92vw,390px)] overflow-hidden rounded-2xl border border-blue-100 bg-white/95 shadow-[0_15px_50px_rgba(32,67,112,0.18)] backdrop-blur-2xl sm:right-6">
-            <div className="flex items-center justify-between border-b border-blue-50 px-4 py-3">
-              <div>
-                <h2 className="text-sm font-semibold text-[#17365f]">Chat history</h2>
-                <p className="mt-0.5 text-xs text-slate-400">Your saved conversations on this device</p>
+      {menuOpen && (
+        <div className="fixed inset-0 z-[60]">
+          <button
+            type="button"
+            aria-label="Close sidebar overlay"
+            onClick={() => setMenuOpen(false)}
+            className="absolute inset-0 h-full w-full bg-[#102747]/35 backdrop-blur-[2px]"
+          />
+          <aside className="absolute inset-y-0 left-0 flex w-[min(86vw,340px)] flex-col border-r border-blue-100 bg-white/95 shadow-2xl backdrop-blur-2xl">
+            <div className="flex h-[68px] items-center justify-between border-b border-blue-50 px-4">
+              <div className="flex items-center gap-2.5">
+                <img src="/salaphie-logo.svg" alt="" className="h-9 w-9 object-contain" />
+                <span className="text-lg font-bold text-[#142d52]">Salaphie</span>
               </div>
               <button
                 type="button"
-                onClick={() => setHistoryOpen(false)}
-                className="rounded-lg p-2 text-slate-400 hover:bg-blue-50 hover:text-[#23466f]"
-                aria-label="Close chat history"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-xl p-2 text-[#45658b] hover:bg-blue-50"
+                aria-label="Close sidebar"
               >
-                <X size={17} />
+                <X size={20} />
               </button>
             </div>
 
-            <div className="max-h-[60dvh] overflow-y-auto p-2">
+            <div className="border-b border-blue-50 p-3">
+              <button
+                type="button"
+                onClick={startNewChat}
+                className="flex w-full items-center gap-3 rounded-xl border border-blue-100 bg-[#f3f8ff] px-3.5 py-3 text-left text-sm font-semibold text-[#23466f] transition hover:bg-blue-50"
+              >
+                <Plus size={18} />
+                New chat
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto p-3">
+              <h2 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Recent chats
+              </h2>
               {history.length === 0 ? (
-                <div className="px-4 py-8 text-center">
-                  <MessageSquare className="mx-auto mb-3 text-[#75a5d6]" size={25} />
-                  <p className="text-sm font-medium text-[#23466f]">No saved conversations yet</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-400">Your questions will appear here automatically.</p>
-                </div>
+                <p className="px-2 py-4 text-sm leading-6 text-slate-400">
+                  Your conversations will appear here.
+                </p>
               ) : (
                 history.map((conversation) => (
                   <div
                     key={conversation.id}
-                    className={`group mb-1 flex items-center gap-2 rounded-xl p-2 transition ${
+                    className={`mb-1 flex items-center gap-1 rounded-xl p-1 ${
                       activeChatId === conversation.id ? "bg-blue-50" : "hover:bg-slate-50"
                     }`}
                   >
                     <button
                       type="button"
                       onClick={() => openConversation(conversation)}
-                      className="min-w-0 flex-1 rounded-lg px-2 py-2 text-left"
+                      className="min-w-0 flex-1 rounded-lg px-2 py-2.5 text-left text-sm text-[#23466f]"
                     >
-                      <span className="block truncate text-sm font-medium text-[#23466f]">
-                        {conversation.title}
-                      </span>
+                      <span className="block truncate font-medium">{conversation.title}</span>
                       <span className="mt-1 block text-xs text-slate-400">
-                        {conversation.messages.filter((message) => message.role === "user").length} question(s)
-                        {" · "}
                         {new Date(conversation.updatedAt).toLocaleDateString()}
                       </span>
                     </button>
                     <button
                       type="button"
                       onClick={() => deleteConversation(conversation.id)}
-                      className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                      className="rounded-lg p-2 text-slate-400 hover:bg-red-50 hover:text-red-600"
                       aria-label={`Delete ${conversation.title}`}
                       title="Delete conversation"
                     >
@@ -431,24 +395,43 @@ export default function Home() {
                   </div>
                 ))
               )}
+
+              <h2 className="mb-2 mt-6 px-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Islamic topics
+              </h2>
+              {modules.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.title}
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      void sendMessage(`Help me research ${item.title} using reliable Islamic sources.`);
+                    }}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm text-[#23466f] transition hover:bg-blue-50"
+                  >
+                    <Icon size={18} className="shrink-0 text-[#5785b5]" />
+                    <span>{item.title}</span>
+                  </button>
+                );
+              })}
+              <a
+                href="#library"
+                onClick={() => setMenuOpen(false)}
+                className="mt-2 flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-[#23466f] hover:bg-blue-50"
+              >
+                <LibraryBig size={18} className="text-[#5785b5]" />
+                Explore topics
+              </a>
             </div>
 
-            <div className="border-t border-blue-50 p-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setHistoryOpen(false);
-                  startNewChat();
-                }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#17365f] px-3 py-2.5 text-sm font-medium text-white transition hover:bg-[#214b7d]"
-              >
-                <Plus size={16} />
-                Start a new chat
-              </button>
+            <div className="border-t border-blue-50 px-4 py-3 text-xs text-slate-400">
+              Islamic research · Source-first answers
             </div>
-          </div>
-        )}
-      </header>
+          </aside>
+        </div>
+      )}
       <section className="relative z-10 mx-auto flex min-h-[calc(100dvh-68px)] max-w-6xl flex-col px-4 sm:px-6">
         {!isChat ? (
           <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center pb-10 pt-12 sm:pt-16">
