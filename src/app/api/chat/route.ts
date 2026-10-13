@@ -788,11 +788,13 @@ Answer in the language the user uses, preserving the user's language naturally a
       type: "answer",
       reply,
     });
-  } catch {
+  } catch (error) {
+    console.error("Salaphie API route error:", error);
+
     return NextResponse.json(
       {
         success: false,
-        reply: "Something went wrong. Please try again.",
+        reply: "The research request failed. Please try again.",
       },
       { status: 500 }
     );
