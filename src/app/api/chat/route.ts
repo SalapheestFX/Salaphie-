@@ -181,9 +181,13 @@ function findReference(message: string) {
   };
 
   // Match numeric or written verse references in Hausa or English.
-  const numericMatch = text.match(
-    /\b(?:verse|ayah|ayat|aya|ayatun|ayata)\s*(?:(?:ta|na|number|numbered)\s*)?(\d{1,3})\b/
-  );
+  const numericMatch =
+    text.match(
+      /\b(?:verse|ayah|ayat|aya|ayatun|ayata)\s*(?:(?:ta|na|number|numbered)\s*)?(\d{1,3})\b/
+    ) ||
+    text.match(
+      /\b(\d{1,3})\s+(?:st|nd|rd|th\s+)?(?:verse|ayah|ayat|aya)\b/
+    );
 
   const ordinalMatch = text.match(
     /\b(\d{1,3})(?:st|nd|rd|th)\s+(?:verse|ayah|ayat|aya)\b/
@@ -273,18 +277,41 @@ const SURAH_ALIASES: Record<string, number> = {
   "al muzzammil": 73,
   "mursalat": 77,
   "al mursalat": 77,
+  "fatiha": 1,
+  "al baqarah": 2,
+  "al maidah": 5,
+  "al an am": 6,
+  "al araf": 7,
+  "al fath": 48,
+  "al hujurat": 49,
+  "al munafiqun": 63,
+  "al jinn": 72,
 };
 
 function findSurah(message: string) {
-  const text = normalize(message);
+  const text = normalize(message)
+    .replace(/\b(surah|suratul|surat|chapter)\s+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-  const combined = { ...SURAH_NAMES, ...SURAH_ALIASES };
+  const combined = {
+    ...SURAH_NAMES,
+    ...SURAH_ALIASES,
+    "muzzammil": 73,
+    "muzammil": 73,
+    "al muzzammil": 73,
+    "mursalat": 77,
+    "al mursalat": 77,
+  };
+
   const names = Object.entries(combined).sort(
     ([a], [b]) => b.length - a.length
   );
 
   for (const [name, chapter] of names) {
-    if (text.includes(name)) return chapter;
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const pattern = new RegExp(`(?:^|\\s)${escaped}(?:$|\\s)`);
+    if (pattern.test(text)) return chapter;
   }
 
   return null;
