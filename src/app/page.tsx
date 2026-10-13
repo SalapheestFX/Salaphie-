@@ -438,7 +438,7 @@ export default function Home() {
                               <p
                                 dir="rtl"
                                 lang="ar"
-                                className="mb-5 text-right text-2xl leading-[2.1] text-[#172f50] sm:text-3xl"
+                                className="mb-5 text-right text-xl leading-[2] text-[#172f50] sm:text-2xl"
                               >
                                 {message.arabic}
                               </p>
