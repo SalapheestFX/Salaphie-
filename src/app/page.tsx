@@ -330,7 +330,7 @@ export default function Home() {
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 h-full w-full bg-[#102747]/35 backdrop-blur-[2px]"
           />
-          <aside className="absolute inset-y-0 left-0 flex w-[min(86vw,340px)] flex-col border-r border-white/80 bg-white/55 shadow-[12px_0_45px_rgba(77,135,190,0.08),inset_-1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl">
+          <aside className="absolute inset-y-0 left-0 flex w-[min(86vw,340px)] flex-col border-r border-white/80 bg-[#f4f9ff]/80 shadow-[12px_0_45px_rgba(77,135,190,0.10),inset_-1px_0_0_rgba(255,255,255,0.95)] backdrop-blur-2xl">
             <div className="flex h-[68px] items-center justify-between border-b border-white/80 bg-white/35 px-4">
               <div className="flex items-center gap-2.5">
                 <img src="/salaphie-logo.svg" alt="" className="h-9 w-9 object-contain" />
