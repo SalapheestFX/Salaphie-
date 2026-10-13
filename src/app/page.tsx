@@ -153,9 +153,6 @@ export default function Home() {
             </div>
             <div>
               <p className="text-lg font-bold tracking-tight">Salaphie</p>
-              <p className="text-[10px] font-medium tracking-wide text-slate-500">
-                ISLAMIC KNOWLEDGE. AUTHENTIC SOURCES.
-              </p>
             </div>
           </a>
 
@@ -407,7 +404,7 @@ export default function Home() {
           <footer className="pb-8 pt-12 text-center">
             <div className="mx-auto mb-4 h-px max-w-xs bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
             <p className="text-xs font-medium text-slate-500">
-              Salaphie · Islamic Knowledge. Authentic Sources.
+              Salaphie
             </p>
             <p className="mt-2 text-[11px] text-slate-400">
               Verify references and consult qualified scholars for complex
