@@ -738,6 +738,135 @@ export async function POST(request: Request) {
       });
     }
 
+    // Natural-language Qur'an topic research
+    const researchIntent = /\b(qur.?an|quranic|ayah|ayat|verse|verses|surah|surat|tafsir|allah|prophet|islamic|ayoyin|surorin|al.?qur.?ani|hakuri|iyaye|zunubi|rahama|imani|azaba)\b/i.test(message);
+    const researchRequest = /\b(find|show|list|search|bring|collect|gather|all|more|verses|ayat|evidence|mentions?|about|what|give me|provide|retrieve|nemo|kawo|tara|duk|ina son|ina neman)\b/i.test(message);
+
+    if (researchIntent && researchRequest && process.env.GROQ_API_KEY) {
+      try {
+        const intentResponse = await fetch(
+          "https://api.groq.com/openai/v1/chat/completions",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+            },
+            body: JSON.stringify({
+              model: "openai/gpt-oss-120b",
+              temperature: 0,
+              max_tokens: 150,
+              messages: [
+                {
+                  role: "system",
+                  content:
+                    'Understand the user request in English or Hausa. Convert it into 1-3 short English search queries for finding relevant Qur’an verses in English translations. Return only JSON in this format: {"queries":["patience","being patient"]}. Do not answer the question.',
+                },
+                { role: "user", content: message },
+              ],
+            }),
+          }
+        );
+
+        if (intentResponse.ok) {
+          const intentData = await intentResponse.json();
+          const raw = intentData.choices?.[0]?.message?.content ?? "";
+          const cleaned = raw.replace(/```(?:json)?/gi, "").trim();
+          const start = cleaned.indexOf("{");
+          const end = cleaned.lastIndexOf("}");
+          const parsed =
+            start >= 0 && end > start
+              ? JSON.parse(cleaned.slice(start, end + 1))
+              : null;
+
+          const queries: string[] = Array.isArray(parsed?.queries)
+            ? parsed.queries
+                .filter((q: unknown) => typeof q === "string" && q.trim())
+                .slice(0, 3)
+            : [];
+
+          const results = await Promise.all(
+            queries.map(async (query) => {
+              const url =
+                `https://api.quran.com/api/v4/search?q=${encodeURIComponent(query)}&size=10&language=en`;
+              const response = await fetch(url, {
+                next: { revalidate: 3600 },
+              });
+              if (!response.ok) return [];
+              const data = await response.json();
+              return Array.isArray(data.search) ? data.search : [];
+            })
+          );
+
+          const unique = new Map<string, any>();
+          for (const item of results.flat()) {
+            if (typeof item.verse_key === "string") {
+              unique.set(item.verse_key, item);
+            }
+          }
+
+          const candidates = [...unique.values()].slice(0, 10);
+
+          const retrieved = await Promise.all(
+            candidates.map(async (item) => {
+              const response = await fetch(
+                `https://api.quran.com/api/v4/verses/by_key/${item.verse_key}?fields=text_uthmani&translations=85`,
+                { next: { revalidate: 86400 } }
+              );
+
+              if (!response.ok) return null;
+
+              const data = await response.json();
+              const verse = data.verse;
+              if (!verse?.text_uthmani) return null;
+
+              const translation = verse.translations?.find(
+                (t: { resource_id: number; text: string }) =>
+                  t.resource_id === 85 && t.text
+              );
+
+              return {
+                key: verse.verse_key,
+                arabic: verse.text_uthmani,
+                translation: translation
+                  ? cleanTranslation(translation.text)
+                  : "",
+              };
+            })
+          );
+
+          const verses = retrieved.filter(
+            (v): v is {
+              key: string;
+              arabic: string;
+              translation: string;
+            } => v !== null
+          );
+
+          if (verses.length > 0) {
+            const reply =
+              `Qur'an search results for: "${message}"\n\n` +
+              `Found ${verses.length} relevant search matches. This is not a guarantee that every verse on this topic has been found.\n\n` +
+              verses
+                .map(
+                  (v, i) =>
+                    `${i + 1}. Qur'an ${v.key}\n${v.arabic}\n${v.translation || "English translation unavailable."}`
+                )
+                .join("\n\n") +
+              "\n\nTranslation: M.A.S. Abdel Haleem. Source: Quran.com API. Read each verse in its surrounding context.";
+
+            return NextResponse.json({
+              success: true,
+              type: "answer",
+              reply,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("[Salaphie Qur'an topic search]", error);
+      }
+    }
+
     // Answer general questions with the AI model.
     const apiKey = process.env.GROQ_API_KEY;
 
