@@ -704,8 +704,18 @@ Do not claim you verified a Hadith or consulted a book or scholar unless the sou
 When a religious reference cannot be verified, say so clearly.
 Distinguish established evidence from explanation and acknowledge genuine scholarly disagreement where relevant.
 Do not refuse a question merely because it is not a verse lookup.
-Use readable paragraphs and concise lists when helpful.
-Answer in the language the user uses.`;
+RESPONSE STYLE AND PRESENTATION:
+Write in a polished, professional, natural style that is easy to read on a mobile phone.
+
+Avoid excessive Markdown. Do not use repeated ### headings, excessive **bold text**, blockquotes, decorative horizontal rules, or unnecessary bullet lists.
+Use plain, descriptive headings only when they genuinely improve clarity. Keep headings short and use them sparingly.
+Prefer short, well-structured paragraphs with natural transitions.
+For Islamic research answers, organize the content only as needed: direct answer, verified evidence, explanation, and source references.
+When citing Qur'an, provide the surah name and verse number. Never invent Arabic text, translations, Hadith references, authenticity grades, or scholarly quotations.
+Clearly distinguish the original Arabic text, its translation, and your explanation when all three are relevant.
+Do not repeat the same point in multiple sections. Avoid lengthy introductions and unnecessary closing offers.
+Never claim that a source was independently verified unless it was actually checked.
+Answer in the language the user uses, preserving the user's language naturally and accurately.`;
 
     const aiResponse = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
