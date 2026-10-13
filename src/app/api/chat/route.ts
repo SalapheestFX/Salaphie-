@@ -739,7 +739,7 @@ export async function POST(request: Request) {
     }
 
     // Answer general questions with the AI model.
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
 
     if (!apiKey) {
       return NextResponse.json(
@@ -776,27 +776,21 @@ Never claim that a source was independently verified unless it was actually chec
 Answer in the language the user uses, preserving the user's language naturally and accurately.`;
 
     const aiResponse = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
+          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          system_instruction: {
-            parts: [{ text: instructions }],
-          },
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: message }],
-            },
+          model: "openai/gpt-oss-120b",
+          messages: [
+            { role: "system", content: instructions },
+            { role: "user", content: message },
           ],
-          generationConfig: {
-            temperature: 0.4,
-            maxOutputTokens: 1200,
-          },
+          temperature: 0.4,
+          max_tokens: 1200,
         }),
       }
     );
@@ -805,7 +799,7 @@ Answer in the language the user uses, preserving the user's language naturally a
       const errorBody = await aiResponse.text();
 
       console.error(
-        "Gemini API error:",
+        "Groq API error:",
         aiResponse.status,
         errorBody.slice(0, 1200)
       );
@@ -813,7 +807,7 @@ Answer in the language the user uses, preserving the user's language naturally a
       return NextResponse.json(
         {
           success: false,
-          reply: `Gemini service error (${aiResponse.status}). Check the server terminal for details.`,
+          reply: `Groq service error (${aiResponse.status}). Check the server terminal for details.`,
         },
         { status: 502 }
       );
@@ -821,14 +815,11 @@ Answer in the language the user uses, preserving the user's language naturally a
 
     const result = await aiResponse.json();
 
-    const reply = result.candidates?.[0]?.content?.parts
-      ?.map((part: { text?: string }) => part.text ?? "")
-      .join("\n")
-      .trim();
+    const reply = result.choices?.[0]?.message?.content?.trim();
 
     if (!reply) {
       console.error(
-        "Gemini returned no text:",
+        "Groq returned no text:",
         JSON.stringify(result.promptFeedback ?? result.candidates?.[0]?.finishReason ?? {})
       );
 
@@ -849,10 +840,14 @@ Answer in the language the user uses, preserving the user's language naturally a
   } catch (error) {
     console.error("Salaphie API route error:", error);
 
+    const details =
+      error instanceof Error ? error.message : String(error);
+
     return NextResponse.json(
       {
         success: false,
-        reply: "The research request failed. Please try again.",
+        reply: "Salaphie encountered a server error. Please check the server logs.",
+        error: process.env.NODE_ENV === "development" ? details : undefined,
       },
       { status: 500 }
     );
