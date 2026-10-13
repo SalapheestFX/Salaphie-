@@ -16,6 +16,9 @@ import {
   Plus,
   Menu,
   X,
+  History,
+  Trash2,
+  MessageSquare,
 } from "lucide-react";
 
 type Message = {
@@ -28,6 +31,15 @@ type Message = {
   source?: string;
   success?: boolean;
 };
+
+type Conversation = {
+  id: string;
+  title: string;
+  messages: Message[];
+  updatedAt: number;
+};
+
+const HISTORY_KEY = "salaphie_chat_history_v1";
 
 const suggestions = [
   {
@@ -65,9 +77,83 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [history, setHistory] = useState<Conversation[]>([]);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyReady, setHistoryReady] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const isChat = messages.length > 0;
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(HISTORY_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const valid = parsed.filter(
+            (item): item is Conversation =>
+              item &&
+              typeof item.id === "string" &&
+              typeof item.title === "string" &&
+              Array.isArray(item.messages)
+          );
+          setHistory(valid);
+          if (valid.length > 0) {
+            const latest = [...valid].sort(
+              (a, b) => b.updatedAt - a.updatedAt
+            )[0];
+            setActiveChatId(latest.id);
+            setMessages(latest.messages);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Could not load Salaphie chat history:", error);
+    } finally {
+      setHistoryReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!historyReady) return;
+    try {
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    } catch (error) {
+      console.error("Could not save Salaphie chat history:", error);
+    }
+  }, [history, historyReady]);
+
+  useEffect(() => {
+    if (!historyReady || messages.length === 0) return;
+
+    const id = activeChatId ?? (
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `chat-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    );
+
+    if (!activeChatId) setActiveChatId(id);
+
+    const firstQuestion =
+      messages.find((message) => message.role === "user")?.text?.trim() ||
+      "New conversation";
+
+    const conversation: Conversation = {
+      id,
+      title:
+        firstQuestion.length > 48
+          ? firstQuestion.slice(0, 48).trimEnd() + "…"
+          : firstQuestion,
+      messages,
+      updatedAt: Date.now(),
+    };
+
+    setHistory((previous) => [
+      conversation,
+      ...previous.filter((item) => item.id !== id),
+    ]);
+  }, [messages, activeChatId, historyReady]);
 
   useEffect(() => {
     if (isChat) {
@@ -75,7 +161,28 @@ export default function Home() {
     }
   }, [messages, loading, isChat]);
 
+  function openConversation(conversation: Conversation) {
+    setActiveChatId(conversation.id);
+    setMessages(conversation.messages);
+    setInput("");
+    setCopiedIndex(null);
+    setHistoryOpen(false);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function deleteConversation(id: string) {
+    setHistory((previous) => previous.filter((item) => item.id !== id));
+    if (activeChatId === id) {
+      setActiveChatId(null);
+      setMessages([]);
+      setInput("");
+      setCopiedIndex(null);
+    }
+  }
+
   function startNewChat() {
+    setActiveChatId(null);
     setMessages([]);
     setInput("");
     setLoading(false);
@@ -183,7 +290,7 @@ export default function Home() {
         <div className="absolute right-[-100px] top-[35%] h-72 w-72 rounded-full bg-blue-100/40 blur-3xl" />
       </div>
 
-      <header className="sticky top-0 z-30 border-b border-white/80 bg-white/85 backdrop-blur-2xl">
+      <header className="sticky top-0 z-30 border-b border-white/80 bg-white/85 backdrop-blur-2xl relative">
         <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between px-4 sm:px-6">
           <button
             type="button"
@@ -200,6 +307,22 @@ export default function Home() {
           </button>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setHistoryOpen((open) => !open);
+                setMenuOpen(false);
+              }}
+              className="hidden items-center gap-2 rounded-xl border border-blue-100 bg-white/80 px-3.5 py-2.5 text-sm font-medium text-[#23466f] shadow-sm transition hover:bg-blue-50 sm:flex"
+            >
+              <History size={17} />
+              History
+              {history.length > 0 && (
+                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs">
+                  {history.length}
+                </span>
+              )}
+            </button>
             <button
               type="button"
               onClick={startNewChat}
@@ -223,6 +346,17 @@ export default function Home() {
           <div className="border-t border-blue-50 bg-white/95 px-4 py-3 shadow-lg sm:hidden">
             <button
               type="button"
+              onClick={() => {
+                setHistoryOpen((open) => !open);
+                setMenuOpen(false);
+              }}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-[#23466f] hover:bg-blue-50"
+            >
+              <History size={18} />
+              Chat history ({history.length})
+            </button>
+            <button
+              type="button"
               onClick={startNewChat}
               className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-[#23466f] hover:bg-blue-50"
             >
@@ -237,6 +371,81 @@ export default function Home() {
               <LibraryBig size={18} />
               Explore Islamic topics
             </a>
+          </div>
+        )}
+        {historyOpen && (
+          <div className="absolute right-3 top-[68px] z-50 w-[min(92vw,390px)] overflow-hidden rounded-2xl border border-blue-100 bg-white/95 shadow-[0_15px_50px_rgba(32,67,112,0.18)] backdrop-blur-2xl sm:right-6">
+            <div className="flex items-center justify-between border-b border-blue-50 px-4 py-3">
+              <div>
+                <h2 className="text-sm font-semibold text-[#17365f]">Chat history</h2>
+                <p className="mt-0.5 text-xs text-slate-400">Your saved conversations on this device</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setHistoryOpen(false)}
+                className="rounded-lg p-2 text-slate-400 hover:bg-blue-50 hover:text-[#23466f]"
+                aria-label="Close chat history"
+              >
+                <X size={17} />
+              </button>
+            </div>
+
+            <div className="max-h-[60dvh] overflow-y-auto p-2">
+              {history.length === 0 ? (
+                <div className="px-4 py-8 text-center">
+                  <MessageSquare className="mx-auto mb-3 text-[#75a5d6]" size={25} />
+                  <p className="text-sm font-medium text-[#23466f]">No saved conversations yet</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-400">Your questions will appear here automatically.</p>
+                </div>
+              ) : (
+                history.map((conversation) => (
+                  <div
+                    key={conversation.id}
+                    className={`group mb-1 flex items-center gap-2 rounded-xl p-2 transition ${
+                      activeChatId === conversation.id ? "bg-blue-50" : "hover:bg-slate-50"
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => openConversation(conversation)}
+                      className="min-w-0 flex-1 rounded-lg px-2 py-2 text-left"
+                    >
+                      <span className="block truncate text-sm font-medium text-[#23466f]">
+                        {conversation.title}
+                      </span>
+                      <span className="mt-1 block text-xs text-slate-400">
+                        {conversation.messages.filter((message) => message.role === "user").length} question(s)
+                        {" · "}
+                        {new Date(conversation.updatedAt).toLocaleDateString()}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteConversation(conversation.id)}
+                      className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                      aria-label={`Delete ${conversation.title}`}
+                      title="Delete conversation"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="border-t border-blue-50 p-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setHistoryOpen(false);
+                  startNewChat();
+                }}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#17365f] px-3 py-2.5 text-sm font-medium text-white transition hover:bg-[#214b7d]"
+              >
+                <Plus size={16} />
+                Start a new chat
+              </button>
+            </div>
           </div>
         )}
       </header>
